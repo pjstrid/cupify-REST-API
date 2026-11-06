@@ -1,0 +1,2 @@
+org: your-serverless-org
+role: arn:aws:iam::123456789012:role/your-lambda-role
