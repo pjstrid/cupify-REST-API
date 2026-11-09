@@ -135,3 +135,51 @@ functions:
           path: /tournaments/{id}/standings
           method: GET
 
+resources:
+  Resources:
+    # TOURNAMENTS TABLE
+    TournamentsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: cupify-tournaments
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+
+    # TEAMS TABLE
+    TeamsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: cupify-teams
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: tournamentId
+            AttributeType: S
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: tournamentId
+            KeyType: HASH
+          - AttributeName: id
+            KeyType: RANGE
+
+    # MATCHES TABLE
+    MatchesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: cupify-matches
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: tournamentId
+            AttributeType: S
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: tournamentId
+            KeyType: HASH
+          - AttributeName: id
+            KeyType: RANGE
