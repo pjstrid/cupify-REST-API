@@ -1,7 +1,7 @@
 import { createError } from "@middy/util";
 import { getTournamentById } from "../../services/tournaments.mjs";
 import { getMatch } from "../../services/matches.mjs";
-import { sendError, sendResponse } from "../../services/responses.mjs";
+import { sendResponse } from "../../services/responses.mjs";
 import middy from "@middy/core";
 import { errorHandler } from "../../middlewares/errorHandler.mjs";
 
