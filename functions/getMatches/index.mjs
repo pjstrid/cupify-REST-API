@@ -5,7 +5,7 @@ import { errorHandler } from "../../middlewares/errorHandler.mjs";
 import { getTournamentById } from "../../services/tournaments.mjs";
 import { createError } from "@middy/util";
 
-const getMatches = async (event) => {
+const getMatchesHandler = async (event) => {
 
     const { id : tournamentId } = event.pathParameters;
 
@@ -20,4 +20,4 @@ const getMatches = async (event) => {
   return sendResponse(200, matches);
 };
 
-export const handler = middy(getMatches).use(errorHandler());
+export const handler = middy(getMatchesHandler).use(errorHandler());
