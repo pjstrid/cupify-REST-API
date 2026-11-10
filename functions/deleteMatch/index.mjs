@@ -3,6 +3,7 @@ import { deleteMatch, getMatch } from "../../services/matches.mjs";
 import { sendResponse } from "../../services/responses.mjs";
 import { errorHandler } from "../../middlewares/errorHandler.mjs";
 import { getTournamentById } from "../../services/tournaments.mjs";
+import { createError } from "@middy/util";
 
 const deleteMatchHandler = async (event) => {
   const { id: tournamentId, matchId } = event.pathParameters;
