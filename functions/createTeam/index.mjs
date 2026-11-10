@@ -26,7 +26,7 @@ const createTeamHandler = async (event) => {
 
     const tournament = await getTournamentById(tournamentId);
     if (!tournament) {
-        throw createError(404, `Tournament with not found`);
+        throw createError(404, `Tournament not found`);
     }
 
     const team = {
