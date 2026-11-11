@@ -19,6 +19,6 @@ export const errorHandler = () => ({
     }
 
     console.error(error);
-    request.response = sendError(500, 'Internal server error');
+    request.response = sendError(500, "Internal server error");
   },
 });

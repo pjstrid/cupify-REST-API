@@ -6,14 +6,13 @@ import { getTournamentById } from "../../services/tournaments.mjs";
 import { createError } from "@middy/util";
 
 const getMatchesHandler = async (event) => {
+  const { id: tournamentId } = event.pathParameters;
 
-    const { id : tournamentId } = event.pathParameters;
+  const tournament = await getTournamentById(tournamentId);
 
-    const tournament = await getTournamentById(tournamentId);
-
-    if(!tournament) {
-        throw createError(404, "Tournament not found");
-    }
+  if (!tournament) {
+    throw createError(404, "Tournament not found");
+  }
 
   const matches = await getMatchesByTournament(tournamentId);
 

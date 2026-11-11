@@ -1,6 +1,11 @@
-import { GetCommand, PutCommand, UpdateCommand, DeleteCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
+import {
+  GetCommand,
+  PutCommand,
+  UpdateCommand,
+  DeleteCommand,
+  QueryCommand,
+} from "@aws-sdk/lib-dynamodb";
 import { db, TABLES } from "./db.mjs";
-
 
 /**
  * Lists every team in a tournament.
@@ -8,18 +13,17 @@ import { db, TABLES } from "./db.mjs";
  * @returns array of teams, [] when there are none
  */
 export const getTeamsByTournament = async (tournamentId) => {
-    const { Items } = await db.send(
-        new QueryCommand({
-            TableName: TABLES.teams,
-            KeyConditionExpression: "tournamentId = :tournamentId",
-            ExpressionAttributeValues: {
-                ":tournamentId": tournamentId,
-            },
-        }),
-    );
-    return Items ?? [];
-}
-
+  const { Items } = await db.send(
+    new QueryCommand({
+      TableName: TABLES.teams,
+      KeyConditionExpression: "tournamentId = :tournamentId",
+      ExpressionAttributeValues: {
+        ":tournamentId": tournamentId,
+      },
+    }),
+  );
+  return Items ?? [];
+};
 
 /**
  * Gets one team in a tournament.
@@ -28,17 +32,17 @@ export const getTeamsByTournament = async (tournamentId) => {
  * @returns the team, or undefined when it doesn't exist in this tournament
  */
 export const getTeam = async (tournamentId, teamId) => {
-    const { Item } = await db.send(
-        new GetCommand({
-            TableName: TABLES.teams,
-            Key: {
-                tournamentId,
-                id: teamId,
-            },
-        }),
-    );
-    return Item;
-}
+  const { Item } = await db.send(
+    new GetCommand({
+      TableName: TABLES.teams,
+      Key: {
+        tournamentId,
+        id: teamId,
+      },
+    }),
+  );
+  return Item;
+};
 
 /**
  * Saves a new team.
@@ -55,7 +59,6 @@ export const createTeam = async (team) => {
   return team;
 };
 
-
 /**
  * Replaces the name, city and coach of a team. id and tournamentId never change.
  * @param tournamentId - id of the tournament
@@ -65,33 +68,31 @@ export const createTeam = async (team) => {
  */
 
 export const updateTeam = async (
-    tournamentId,
-    teamId,
-    { name, city, coach },
+  tournamentId,
+  teamId,
+  { name, city, coach },
 ) => {
-    const { Attributes } = await db.send(
-        new UpdateCommand({
-            TableName: TABLES.teams,
-            Key: {
-                tournamentId,
-                id: teamId,
-            },
-            UpdateExpression: 
-            "SET #name = :name, city = :city, coach = :coach",
-            ExpressionAttributeNames: {
-                "#name": "name",
-            },
-            ExpressionAttributeValues: {
-                ":name": name,
-                ":city": city,
-                ":coach": coach,
-            },
-            ReturnValues: "ALL_NEW",
-        }),
-    );
-    return Attributes;
-}
-
+  const { Attributes } = await db.send(
+    new UpdateCommand({
+      TableName: TABLES.teams,
+      Key: {
+        tournamentId,
+        id: teamId,
+      },
+      UpdateExpression: "SET #name = :name, city = :city, coach = :coach",
+      ExpressionAttributeNames: {
+        "#name": "name",
+      },
+      ExpressionAttributeValues: {
+        ":name": name,
+        ":city": city,
+        ":coach": coach,
+      },
+      ReturnValues: "ALL_NEW",
+    }),
+  );
+  return Attributes;
+};
 
 /**
  * Deletes a team.
@@ -109,7 +110,6 @@ export const deleteTeam = async (tournamentId, teamId) => {
     }),
   );
 };
- 
 
 /**
  * Checks if a tournament has at least one team.
@@ -117,15 +117,15 @@ export const deleteTeam = async (tournamentId, teamId) => {
  * @returns true when the tournament has teams, otherwise false
  */
 export const hasTeams = async (tournamentId) => {
-    const { Items } = await db.send(
-        new QueryCommand({
-            TableName: TABLES.teams,
-            KeyConditionExpression: "tournamentId = :tournamentId",
-            ExpressionAttributeValues: {
-                ":tournamentId": tournamentId,
-            },
-            Limit: 1,
-        }),
-    );
-    return Items.length > 0;
+  const { Items } = await db.send(
+    new QueryCommand({
+      TableName: TABLES.teams,
+      KeyConditionExpression: "tournamentId = :tournamentId",
+      ExpressionAttributeValues: {
+        ":tournamentId": tournamentId,
+      },
+      Limit: 1,
+    }),
+  );
+  return Items.length > 0;
 };

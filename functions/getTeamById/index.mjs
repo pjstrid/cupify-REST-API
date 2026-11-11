@@ -6,19 +6,19 @@ import { getTournamentById } from "../../services/tournaments.mjs";
 import { getTeam } from "../../services/teams.mjs";
 
 const getTeamByIdHandler = async (event) => {
-    const { id: tournamentId, teamId } = event.pathParameters;
+  const { id: tournamentId, teamId } = event.pathParameters;
 
-    const tournament = await getTournamentById(tournamentId);
-    if (!tournament) {
-        throw createError(404, "Tournament not found");
-    }
+  const tournament = await getTournamentById(tournamentId);
+  if (!tournament) {
+    throw createError(404, "Tournament not found");
+  }
 
-    const team = await getTeam(tournamentId, teamId);
-    if (!team) {
-        throw createError(404, "Team not found");
-    }
+  const team = await getTeam(tournamentId, teamId);
+  if (!team) {
+    throw createError(404, "Team not found");
+  }
 
-    return sendResponse(200, team);
+  return sendResponse(200, team);
 };
 
 export const handler = middy(getTeamByIdHandler).use(errorHandler());

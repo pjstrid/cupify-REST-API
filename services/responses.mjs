@@ -4,5 +4,5 @@ export const sendResponse = (statusCode, data) => ({
   body: JSON.stringify(data),
 });
 
-export const sendError = (statusCode, message) => 
-    sendResponse(statusCode, { error: message });
+export const sendError = (statusCode, message) =>
+  sendResponse(statusCode, { error: message });
