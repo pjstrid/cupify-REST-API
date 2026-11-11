@@ -15,12 +15,17 @@ Node.js 24 · AWS Lambda · API Gateway (HTTP API) · DynamoDB (three tables: `c
 You need Node.js 24, an AWS account with an IAM role for Lambda, and a Serverless Framework account.
 
 ```bash
+npm install -g serverless
+serverless login                   # run this outside the project folder
+git clone https://github.com/pjstrid/cupify-REST-API.git
+cd cupify-REST-API
 npm install
 cp config.example.yml config.yml   # fill in your own org and role
-serverless login
 serverless deploy
 serverless info                    # shows your API URL
 ```
+
+Run `serverless login` before you go into the project folder. Inside it, login can't read the `org` from `config.yml` and fails.
 
 `config.yml` is in `.gitignore`. **Never commit it.**
 
