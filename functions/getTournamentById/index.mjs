@@ -1,11 +1,20 @@
+/**
+ * GET /tournaments/{id}
+ * Returns one tournament.
+ */
 import middy from "@middy/core";
-import { errorHandler } from "../../middlewares/errorHandler.mjs";
+import { createError } from "@middy/util";
 import { sendResponse } from "../../services/responses.mjs";
 import { getTournamentById } from "../../services/tournaments.mjs";
-import { createError } from "@middy/util";
+import { errorHandler } from "../../middlewares/errorHandler.mjs";
 
+/**
+ * Gets a tournament by its id.
+ * @returns 200 with the tournament; 404 / 500 via errorHandler.
+ */
 const getTournamentByIdHandler = async (event) => {
-  const tournament = await getTournamentById(event.pathParameters.id);
+  const { id: tournamentId } = event.pathParameters;
+  const tournament = await getTournamentById(tournamentId);
   if (!tournament) {
     throw createError(404, "Tournament not found");
   }

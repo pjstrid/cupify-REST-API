@@ -1,13 +1,24 @@
+/**
+ * PATCH /tournaments/{id}/status
+ * Changes only the status of a tournament.
+ */
 import middy from "@middy/core";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
 import { createError } from "@middy/util";
-import { errorHandler } from "../../middlewares/errorHandler.mjs";
 import { sendResponse } from "../../services/responses.mjs";
 import { isJsonObject, missingFields } from "../../services/validation.mjs";
-import { getTournamentById } from "../../services/tournaments.mjs";
-import { updateTournamentStatus } from "../../services/tournaments.mjs";
+import {
+  getTournamentById,
+  updateTournamentStatus,
+} from "../../services/tournaments.mjs";
+import { errorHandler } from "../../middlewares/errorHandler.mjs";
 
+/**
+ * Updates the status of a tournament. Name, sport, location and startDate never change.
+ * @returns 200 with the updated tournament; 400 / 404 / 500 via errorHandler.
+ */
 const updateTournamentStatusHandler = async (event) => {
+  const { id: tournamentId } = event.pathParameters;
   const data = event.body;
 
   if (!isJsonObject(data)) {
@@ -24,13 +35,13 @@ const updateTournamentStatusHandler = async (event) => {
       "status must be one of: upcoming, ongoing, completed",
     );
   }
-  const id = event.pathParameters.id;
-  const tournament = await getTournamentById(id);
+
+  const tournament = await getTournamentById(tournamentId);
   if (!tournament) {
     throw createError(404, "Tournament not found");
   }
 
-  const updated = await updateTournamentStatus(id, data.status);
+  const updated = await updateTournamentStatus(tournamentId, data.status);
   return sendResponse(200, updated);
 };
 export const handler = middy(updateTournamentStatusHandler)
