@@ -1,12 +1,20 @@
+/**
+ * PUT /tournaments/{id}/teams/{teamId}
+ * Replaces the name, city and coach of a team.
+ */
 import middy from "@middy/core";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
 import { createError } from "@middy/util";
-import { errorHandler } from "../../middlewares/errorHandler.mjs";
 import { sendResponse } from "../../services/responses.mjs";
 import { isJsonObject, missingFields } from "../../services/validation.mjs";
 import { getTournamentById } from "../../services/tournaments.mjs";
 import { getTeam, updateTeam } from "../../services/teams.mjs";
+import { errorHandler } from "../../middlewares/errorHandler.mjs";
 
+/**
+ * Updates a team. id and tournamentId never change.
+ * @returns 200 with the updated team; 400 / 404 / 500 via errorHandler.
+ */
 const updateTeamHandler = async (event) => {
   const { id: tournamentId, teamId } = event.pathParameters;
   const data = event.body;

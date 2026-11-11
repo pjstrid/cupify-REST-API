@@ -1,10 +1,18 @@
+/**
+ * GET /tournaments/{id}/teams
+ * Lists every team in a tournament.
+ */
 import middy from "@middy/core";
 import { createError } from "@middy/util";
-import { errorHandler } from "../../middlewares/errorHandler.mjs";
 import { sendResponse } from "../../services/responses.mjs";
 import { getTournamentById } from "../../services/tournaments.mjs";
 import { getTeamsByTournament } from "../../services/teams.mjs";
+import { errorHandler } from "../../middlewares/errorHandler.mjs";
 
+/**
+ * Returns all teams in a tournament.
+ * @returns 200 with an array of teams, [] when there are none; 404 / 500 via errorHandler.
+ */
 const getTeamsHandler = async (event) => {
   const { id: tournamentId } = event.pathParameters;
 

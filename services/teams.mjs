@@ -1,3 +1,7 @@
+/**
+ * Data layer for teams: every DynamoDB call for the cupify-teams table.
+ * Functions only read and write. The handlers decide what a missing item means.
+ */
 import {
   GetCommand,
   PutCommand,
@@ -22,7 +26,7 @@ export const getTeamsByTournament = async (tournamentId) => {
       },
     }),
   );
-  return Items ?? [];
+  return Items;
 };
 
 /**
@@ -66,7 +70,6 @@ export const createTeam = async (team) => {
  * @param fields - the new name, city and coach
  * @returns the updated team
  */
-
 export const updateTeam = async (
   tournamentId,
   teamId,

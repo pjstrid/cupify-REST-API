@@ -1,13 +1,21 @@
+/**
+ * POST /tournaments/{id}/teams
+ * Registers a new team in a tournament.
+ */
 import { randomUUID } from "node:crypto";
 import middy from "@middy/core";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
 import { createError } from "@middy/util";
-import { errorHandler } from "../../middlewares/errorHandler.mjs";
 import { sendResponse } from "../../services/responses.mjs";
 import { isJsonObject, missingFields } from "../../services/validation.mjs";
 import { getTournamentById } from "../../services/tournaments.mjs";
 import { createTeam } from "../../services/teams.mjs";
+import { errorHandler } from "../../middlewares/errorHandler.mjs";
 
+/**
+ * Validates the body and saves a new team in the tournament.
+ * @returns 201 with the created team; 400 / 404 / 500 via errorHandler.
+ */
 const createTeamHandler = async (event) => {
   const { id: tournamentId } = event.pathParameters;
   const data = event.body;
@@ -23,12 +31,12 @@ const createTeamHandler = async (event) => {
 
   const tournament = await getTournamentById(tournamentId);
   if (!tournament) {
-    throw createError(404, `Tournament not found`);
+    throw createError(404, "Tournament not found");
   }
 
   const team = {
     id: randomUUID(),
-    tournamentId: tournamentId,
+    tournamentId,
     name: data.name.trim(),
     city: data.city.trim(),
     coach: data.coach.trim(),

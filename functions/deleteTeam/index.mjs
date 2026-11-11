@@ -1,11 +1,19 @@
+/**
+ * DELETE /tournaments/{id}/teams/{teamId}
+ * Deletes a team that is not used in any match.
+ */
 import middy from "@middy/core";
 import { createError } from "@middy/util";
-import { errorHandler } from "../../middlewares/errorHandler.mjs";
 import { sendResponse } from "../../services/responses.mjs";
 import { getTournamentById } from "../../services/tournaments.mjs";
 import { getTeam, deleteTeam } from "../../services/teams.mjs";
 import { isTeamInAnyMatch } from "../../services/matches.mjs";
+import { errorHandler } from "../../middlewares/errorHandler.mjs";
 
+/**
+ * Deletes a team when no match uses it, as home or away team.
+ * @returns 204 with no body; 404 / 409 / 500 via errorHandler.
+ */
 const deleteTeamHandler = async (event) => {
   const { id: tournamentId, teamId } = event.pathParameters;
 
