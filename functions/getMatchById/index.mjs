@@ -1,10 +1,18 @@
+/**
+ * GET /tournaments/{id}/matches/{matchId}
+ * Returns one match in a tournament.
+ */
+import middy from "@middy/core";
 import { createError } from "@middy/util";
+import { sendResponse } from "../../services/responses.mjs";
 import { getTournamentById } from "../../services/tournaments.mjs";
 import { getMatch } from "../../services/matches.mjs";
-import { sendResponse } from "../../services/responses.mjs";
-import middy from "@middy/core";
 import { errorHandler } from "../../middlewares/errorHandler.mjs";
 
+/**
+ * Gets a match by its id, only from this tournament.
+ * @returns 200 with the match; 404 / 500 via errorHandler.
+ */
 const getMatchByIdHandler = async (event) => {
   const { id: tournamentId, matchId } = event.pathParameters;
 

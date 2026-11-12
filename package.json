@@ -1,19 +1,20 @@
 {
   "name": "cupify-rest-api",
   "version": "1.0.0",
-  "description": "<!-- title: 'AWS Simple HTTP Endpoint example in NodeJS' description: 'This template demonstrates how to make a simple HTTP API with Node.js running on AWS Lambda and API Gateway using the Serverless Framework.' layout: Doc framework: v4 platform: AWS language: nodeJS authorLink: 'https://github.com/serverless' authorName: 'Serverless, Inc.' authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4' -->",
-  "main": "handler.js",
+  "private": true,
+  "description": "REST API for managing sports tournaments, teams, matches and results.",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "format": "prettier --write \"**/*.mjs\"",
+    "format:check": "prettier --check \"**/*.mjs\""
   },
-  "keywords": [],
-  "type": "commonjs",
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.1163.0",
     "@aws-sdk/lib-dynamodb": "^3.1163.0",
     "@middy/core": "^7.9.2",
-    "@middy/http-error-handler": "^7.9.2",
     "@middy/http-json-body-parser": "^7.9.2",
     "@middy/util": "^7.9.2"
+  },
+  "devDependencies": {
+    "prettier": "3.9.10"
   }
 }

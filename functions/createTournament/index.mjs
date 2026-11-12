@@ -1,8 +1,11 @@
+/**
+ * POST /tournaments
+ * Creates a new tournament with the status "upcoming".
+ */
 import { randomUUID } from "node:crypto";
 import middy from "@middy/core";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
 import { createError } from "@middy/util";
-import { errorHandler } from "../../middlewares/errorHandler.mjs";
 import { sendResponse } from "../../services/responses.mjs";
 import {
   isJsonObject,
@@ -10,7 +13,12 @@ import {
   isValidDate,
 } from "../../services/validation.mjs";
 import { createTournament } from "../../services/tournaments.mjs";
+import { errorHandler } from "../../middlewares/errorHandler.mjs";
 
+/**
+ * Validates the body and saves a new tournament.
+ * @returns 201 with the created tournament; 400 / 500 via errorHandler.
+ */
 const createTournamentHandler = async (event) => {
   const data = event.body;
 
@@ -31,8 +39,8 @@ const createTournamentHandler = async (event) => {
   }
 
   const tournament = {
-    name: data.name.trim(),
     id: randomUUID(),
+    name: data.name.trim(),
     sport: data.sport.trim(),
     location: data.location.trim(),
     startDate: data.startDate,

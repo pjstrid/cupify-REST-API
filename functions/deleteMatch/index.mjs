@@ -1,10 +1,18 @@
+/**
+ * DELETE /tournaments/{id}/matches/{matchId}
+ * Deletes a match, scheduled or completed.
+ */
 import middy from "@middy/core";
-import { deleteMatch, getMatch } from "../../services/matches.mjs";
-import { sendResponse } from "../../services/responses.mjs";
-import { errorHandler } from "../../middlewares/errorHandler.mjs";
-import { getTournamentById } from "../../services/tournaments.mjs";
 import { createError } from "@middy/util";
+import { sendResponse } from "../../services/responses.mjs";
+import { getTournamentById } from "../../services/tournaments.mjs";
+import { getMatch, deleteMatch } from "../../services/matches.mjs";
+import { errorHandler } from "../../middlewares/errorHandler.mjs";
 
+/**
+ * Deletes a match. A deleted match no longer counts in the standings.
+ * @returns 204 with no body; 404 / 500 via errorHandler.
+ */
 const deleteMatchHandler = async (event) => {
   const { id: tournamentId, matchId } = event.pathParameters;
 

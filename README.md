@@ -67,7 +67,7 @@ Handlers never talk to DynamoDB directly. They call the functions in `services/`
 
 ## How to build an endpoint
 
-- Wrap the handler in middy: `middy(handler).use(httpJsonBodyParser()).use(errorHandler())`. Skip `httpJsonBodyParser()` when there is no body.
+- Write a named handler, then wrap it in middy on the last line: `export const handler = middy(createTeamHandler).use(httpJsonBodyParser()).use(errorHandler());`. Skip `httpJsonBodyParser()` when there is no body.
 - Errors: `throw createError(status, message)`. Success: `return sendResponse(status, data)`.
 - Read and write data only through `services/<resource>.mjs`.
 
@@ -77,8 +77,34 @@ Handlers never talk to DynamoDB directly. They call the functions in `services/`
 | `201` with `{ message, team }` | `201` with the created object only |
 | Delete returns `200` with a message | `sendResponse(204)` — no body |
 | `httpErrorHandler()`, `{ message }` errors | `errorHandler()` + `throw createError(...)` |
-| `crypto.randomUUID().slice(0, 5)` | the full `crypto.randomUUID()` |
+| `crypto.randomUUID().slice(0, 5)` | `import { randomUUID } from "node:crypto"`, then the full `randomUUID()` |
 | `ScanCommand` for lists | `QueryCommand` on `tournamentId` for teams and matches |
+
+## Code style
+
+Prettier formats the code: spaces, quotes, semicolons and line breaks. The settings are in `.prettierrc`, so every computer formats the same way. `npm install` installs it.
+
+```bash
+npm run format         # formats every .mjs file
+npm run format:check   # only checks, changes nothing
+```
+
+Run `npm run format` before you commit.
+
+Prettier can't fix everything. Follow these rules too:
+
+| Rule | Example |
+| --- | --- |
+| Every file starts with a doc comment: the route, then what it does | `/** POST /tournaments/{id}/teams` · `Registers a team in a tournament. */` |
+| Named handler, then middy on the last line | `const createTeamHandler = async (event) => { … };` then `export const handler = middy(createTeamHandler)…` |
+| Read path parameters once, at the top, with clear names | `const { id: tournamentId, teamId } = event.pathParameters;` |
+| New ids come from Node | `import { randomUUID } from "node:crypto";` |
+| Import order: `node:` modules → npm packages → our own files, `errorHandler` last | `node:crypto` → `@middy/core` → `../../services/…` → `../../middlewares/…` |
+| A doc comment (`/** … */`) directly above every handler and exported function | one-line description, `@param name - meaning`, `@returns …` |
+| Build objects in the same field order as the API responses | tournament: `id, name, sport, location, startDate, status` |
+| Plain strings use `"…"`. Use `` `…` `` only with `${…}` | `"Tournament not found"` |
+
+Comments explain **why**, not what the code already says. No ticket numbers in comments.
 
 ## Shared functions
 
@@ -91,6 +117,8 @@ Handlers never talk to DynamoDB directly. They call the functions in `services/`
 | `responses.mjs` | `sendResponse`, `sendError` |
 
 Get-functions return `undefined` when nothing is found. List-functions return `[]` when the list is empty.
+
+Standings has no service file. `getStandings` reads teams and matches with the functions above and computes the table in its own handler. It is never stored.
 
 ## Error messages
 

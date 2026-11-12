@@ -1,6 +1,6 @@
 /**
- * GET /tournaments/{id}/standings: the league table for a tournament,
- * computed from its completed matches on every request.
+ * GET /tournaments/{id}/standings
+ * Computes the league table from completed matches on every request. Never stored.
  */
 import middy from "@middy/core";
 import { createError } from "@middy/util";
@@ -11,23 +11,12 @@ import { getMatchesByTournament } from "../../services/matches.mjs";
 import { errorHandler } from "../../middlewares/errorHandler.mjs";
 
 /**
- * Builds the standings for one tournament.
- * @returns 200 with an array of rows sorted by points, then goal difference; 404 / 500 via errorHandler.
+ * Builds the league table for one tournament. Only completed matches count: win 3, draw 1, loss 0.
+ * @param teams - every team in the tournament
+ * @param matches - every match in the tournament
+ * @returns one row per team, also teams with 0 played, sorted by points and then goal difference
  */
-export const handler = middy(async (event) => {
-  const tournamentId = event.pathParameters.id;
-
-  const tournament = await getTournamentById(tournamentId);
-
-  if (!tournament) {
-    throw createError(404, "Tournament not found");
-  }
-
-  const [teams, matches] = await Promise.all([
-    getTeamsByTournament(tournamentId),
-    getMatchesByTournament(tournamentId),
-  ]);
-
+const buildStandings = (teams, matches) => {
   const rows = {};
   for (const team of teams) {
     rows[team.id] = {
@@ -83,5 +72,27 @@ export const handler = middy(async (event) => {
   standings.sort(
     (a, b) => b.points - a.points || b.goalDifference - a.goalDifference,
   );
-  return sendResponse(200, standings);
-}).use(errorHandler());
+  return standings;
+};
+
+/**
+ * Returns the standings for one tournament.
+ * @returns 200 with an array of rows; 404 / 500 via errorHandler.
+ */
+const getStandingsHandler = async (event) => {
+  const { id: tournamentId } = event.pathParameters;
+
+  const tournament = await getTournamentById(tournamentId);
+  if (!tournament) {
+    throw createError(404, "Tournament not found");
+  }
+
+  const [teams, matches] = await Promise.all([
+    getTeamsByTournament(tournamentId),
+    getMatchesByTournament(tournamentId),
+  ]);
+
+  return sendResponse(200, buildStandings(teams, matches));
+};
+
+export const handler = middy(getStandingsHandler).use(errorHandler());
