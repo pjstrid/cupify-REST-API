@@ -150,9 +150,14 @@ All errors look like `{ "error": "..." }`.
 
 ## Testing
 
-Deploy and test against your own URL. In Insomnia, create an environment with `base_url` and `tournament_id`, and use `{{ _.base_url }}/tournaments/{{ _.tournament_id }}/teams` in your requests.
+The shared Insomnia collection is in `insomnia/cupify-collection.yaml`. It tests every endpoint in the same order as the endpoint table above, including the errors (`400`, `404`, `409`).
 
-The shared Insomnia collection is added in CUP-022.
+1. In Insomnia, go to the home screen and click **Import**. Choose `insomnia/cupify-collection.yaml`. Import it as a **new** collection, not into an existing one.
+2. `base_url` in the Base Environment already points to the public API URL. To test your own deploy, change it to the URL from `serverless info`.
+3. Right-click the collection → **Run**, and run all folders in order.
+
+Every request checks its own status code. The POST requests save the new ids (`tournament_id`, `team_a_id`, `team_b_id`, `team_c_id`, `match_id`), so you never copy ids by hand. The last folder, **7 Clean up**, deletes everything the run created.
+
 
 ## Glossary
 
@@ -167,7 +172,7 @@ The shared Insomnia collection is added in CUP-022.
 
 ## Team
 
-- [pjstrid](https://github.com/pjstrid)
-- [eriknordvall](https://github.com/eriknordvall)
-- [PatrikNoordh](https://github.com/PatrikNoordh)
-- [Nedakhalaj](https://github.com/Nedakhalaj)
+- [Jonathan Strid](https://github.com/pjstrid)
+- [Erik Nordvall](https://github.com/eriknordvall)
+- [Patrik Noordh](https://github.com/PatrikNoordh)
+- [Neda Khalaj](https://github.com/Nedakhalaj)
