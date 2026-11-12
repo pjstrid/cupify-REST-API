@@ -4,7 +4,7 @@ Cupify is a REST API for managing sports tournaments, teams, matches and results
 
 ## Public API URL
 
-https://uva769skqb.execute-api.eu-north-1.amazonaws.com
+https://lgeodex5ua.execute-api.eu-north-1.amazonaws.com
 
 ## Tech stack
 
