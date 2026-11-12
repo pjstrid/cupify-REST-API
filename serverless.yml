@@ -1,0 +1,185 @@
+# Your own Serverless org, read from config.yml (not committed - copy config.example.yml).
+org: ${file(./config.yml):org}
+# Used in the names of the Lambdas and the stack in AWS.
+service: cupify-rest-api
+
+provider:
+  name: aws
+  runtime: nodejs24.x
+  architecture: arm64
+  region: eu-north-1
+  iam:
+    role: ${file(./config.yml):role}
+
+functions:
+  # TOURNAMENTS
+  getTournaments:
+    handler: functions/getTournaments/index.handler
+    events:
+      - httpApi:
+          path: /tournaments
+          method: GET
+
+  getTournamentById:
+    handler: functions/getTournamentById/index.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}
+          method: GET
+
+  createTournament:
+    handler: functions/createTournament/index.handler
+    events:
+      - httpApi:
+          path: /tournaments
+          method: POST
+
+  updateTournamentStatus:
+    handler: functions/updateTournamentStatus/index.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/status
+          method: PATCH
+
+  deleteTournament:
+    handler: functions/deleteTournament/index.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}
+          method: DELETE
+
+  # TEAMS
+  getTeams:
+    handler: functions/getTeams/index.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/teams
+          method: GET
+
+  getTeamById:
+    handler: functions/getTeamById/index.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/teams/{teamId}
+          method: GET
+
+  createTeam:
+    handler: functions/createTeam/index.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/teams
+          method: POST
+
+  updateTeam:
+    handler: functions/updateTeam/index.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/teams/{teamId}
+          method: PUT
+
+  deleteTeam:
+    handler: functions/deleteTeam/index.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/teams/{teamId}
+          method: DELETE
+
+  # MATCHES
+  getMatches:
+    handler: functions/getMatches/index.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/matches
+          method: GET
+
+  getMatchById:
+    handler: functions/getMatchById/index.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/matches/{matchId}
+          method: GET
+
+  createMatch:
+    handler: functions/createMatch/index.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/matches
+          method: POST
+
+  updateMatch:
+    handler: functions/updateMatch/index.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/matches/{matchId}
+          method: PUT
+
+  registerMatchResult:
+    handler: functions/registerMatchResult/index.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/matches/{matchId}/result
+          method: PATCH
+
+  deleteMatch:
+    handler: functions/deleteMatch/index.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/matches/{matchId}
+          method: DELETE
+
+  # STANDINGS (BONUS)
+  getStandings:
+    handler: functions/getStandings/index.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/standings
+          method: GET
+
+resources:
+  Resources:
+    # TOURNAMENTS TABLE
+    TournamentsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: cupify-tournaments
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+
+    # TEAMS TABLE
+    TeamsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: cupify-teams
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: tournamentId
+            AttributeType: S
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: tournamentId
+            KeyType: HASH
+          - AttributeName: id
+            KeyType: RANGE
+
+    # MATCHES TABLE
+    MatchesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: cupify-matches
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: tournamentId
+            AttributeType: S
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: tournamentId
+            KeyType: HASH
+          - AttributeName: id
+            KeyType: RANGE

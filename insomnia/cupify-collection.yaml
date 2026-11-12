@@ -1,0 +1,1227 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: Public Cupify API
+meta:
+  id: wrk_c005a0b962664c94bc3504a7b5003313
+  created: 1794483047074
+  modified: 1794483047074
+  description: ""
+collection:
+  - name: 1 Tournaments
+    meta:
+      id: fld_13fba59d37c44014bf3da50f157cdf71
+      created: 1794482826995
+      modified: 1794484812241
+      sortKey: 1
+      description: ""
+    children:
+      - url: "{{ _.base_url }}/tournaments/{{ _.tournament_id }}"
+        name: 1.3 GET tournament by id
+        meta:
+          id: req_27da56a6730146c781e704a0a26e5171
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 3
+        method: GET
+        scripts:
+          afterResponse: |-
+            insomnia.test("200 OK", () => {
+              insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tournaments"
+        name: 1.2 GET all tournaments
+        meta:
+          id: req_59a83010169d483ca17cae9511363b2d
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 2
+        method: GET
+        scripts:
+          afterResponse: |-
+            insomnia.test("200 OK", () => {
+              insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+            insomnia.test("Body is an array", () => {
+              insomnia.expect(insomnia.response.json()).to.be.an("array");
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tournaments/{{ _.tournament_id }}/status"
+        name: 1.4 PATCH tournament status
+        meta:
+          id: req_c501908bf1664ac5acbe0bba7ca08b0c
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 4
+        method: PATCH
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "status": "ongoing"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        scripts:
+          afterResponse: >-
+            insomnia.test("200 OK", () => {
+              insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+
+            insomnia.test("Status is ongoing", () => {
+              insomnia.expect(insomnia.response.json().status).to.eql("ongoing");
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tournaments"
+        name: 1.1 POST tournament
+        meta:
+          id: req_ceddbdde12bb488aba37bae8ec47bded
+          created: 1794482826995
+          modified: 1794484529621
+          isPrivate: false
+          description: ""
+          sortKey: 1
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "name": "South London Summer Cup",
+              "sport": "Football",
+              "location": "London",
+              "startDate": "2027-06-10"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        scripts:
+          afterResponse: >-
+            insomnia.test("201 Created", () => {
+              insomnia.expect(insomnia.response.code).to.eql(201);
+            });
+
+            if (insomnia.response.code === 201) {
+              insomnia.environment.set("tournament_id", insomnia.response.json().id);
+            }
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: 5 Bad input
+    meta:
+      id: fld_22f666e5160e4fd5a903e2bf393fb60f
+      created: 1794482826995
+      modified: 1794484819606
+      sortKey: 5
+      description: ""
+    children:
+      - url: "{{ _.base_url }}/tournaments"
+        name: 5.02 POST tournament - invalid date
+        meta:
+          id: req_1deafc55374e47b09538c0d613c08211
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 2
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "name": "Bad Date Cup",
+              "sport": "Football",
+              "location": "London",
+              "startDate": "2027-02-30"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        scripts:
+          afterResponse: |-
+            insomnia.test("400 Bad Request", () => {
+              insomnia.expect(insomnia.response.code).to.eql(400);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tournaments/{{ _.tournament_id }}/teams/{{ _.team_b_id
+          }}"
+        name: 5.06 PUT team - empty name
+        meta:
+          id: req_213983466d294ea08156d8d65abdee38
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 6
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "name": "   ",
+              "city": "London",
+              "coach": "Bruce Banner"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        scripts:
+          afterResponse: |-
+            insomnia.test("400 Bad Request", () => {
+              insomnia.expect(insomnia.response.code).to.eql(400);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tournaments"
+        name: 5.03 POST tournament - not JSON
+        meta:
+          id: req_33313f6ed02f404b961c7ada6ced7214
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 3
+        method: POST
+        body:
+          mimeType: application/json
+          text: this is not json
+        headers:
+          - name: Content-Type
+            value: application/json
+        scripts:
+          afterResponse: |-
+            insomnia.test("400 Bad Request", () => {
+              insomnia.expect(insomnia.response.code).to.eql(400);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tournaments/{{ _.tournament_id }}/status"
+        name: 5.04 PATCH tournament status - invalid status
+        meta:
+          id: req_418047dd6b6742fab1c20ca729ff516d
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 4
+        method: PATCH
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "status": "finished"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        scripts:
+          afterResponse: |-
+            insomnia.test("400 Bad Request", () => {
+              insomnia.expect(insomnia.response.code).to.eql(400);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tournaments/{{ _.tournament_id }}/matches"
+        name: 5.07 POST match - same team twice
+        meta:
+          id: req_5217c09edf1f49c29d4fa531a5bd52f0
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 7
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "homeTeamId": "{{ _.team_b_id }}",
+              "awayTeamId": "{{ _.team_b_id }}",
+              "date": "2027-06-15T14:00:00Z"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        scripts:
+          afterResponse: |-
+            insomnia.test("400 Bad Request", () => {
+              insomnia.expect(insomnia.response.code).to.eql(400);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tournaments"
+        name: 5.01 POST tournament - missing field
+        meta:
+          id: req_691aef22369b4efaba78a0a07fcb8132
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 1
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "name": "No Date Cup",
+              "sport": "Football",
+              "location": "London"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        scripts:
+          afterResponse: |-
+            insomnia.test("400 Bad Request", () => {
+              insomnia.expect(insomnia.response.code).to.eql(400);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tournaments/{{ _.unknown_id }}/matches"
+        name: 5.13 GET matches - unknown tournament
+        meta:
+          id: req_a7d5cef614b648a9b1aa300488fdff00
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 13
+        method: GET
+        scripts:
+          afterResponse: |-
+            insomnia.test("404 Not Found", () => {
+              insomnia.expect(insomnia.response.code).to.eql(404);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tournaments/{{ _.tournament_id }}/matches/{{ _.unknown_id
+          }}"
+        name: 5.12 GET match - unknown id
+        meta:
+          id: req_a9d494233a8940639bf3a34474a9cf1c
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 12
+        method: GET
+        scripts:
+          afterResponse: |-
+            insomnia.test("404 Not Found", () => {
+              insomnia.expect(insomnia.response.code).to.eql(404);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tournaments/{{ _.tournament_id }}/matches/{{ _.match_id
+          }}/result"
+        name: 5.09 PATCH match result - negative score
+        meta:
+          id: req_adc4d291388542c196802d6db43bf15e
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 9
+        method: PATCH
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "homeScore": -1,
+              "awayScore": 2
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        scripts:
+          afterResponse: |-
+            insomnia.test("400 Bad Request", () => {
+              insomnia.expect(insomnia.response.code).to.eql(400);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tournaments/{{ _.tournament_id }}/teams"
+        name: 5.05 POST team - missing field
+        meta:
+          id: req_bbeef70fb6bc4e1eb9afdf26084c9e2e
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 5
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "name": "No Coach FC",
+              "city": "London"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        scripts:
+          afterResponse: |-
+            insomnia.test("400 Bad Request", () => {
+              insomnia.expect(insomnia.response.code).to.eql(400);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tournaments/{{ _.unknown_id }}"
+        name: 5.10 GET tournament - unknown id
+        meta:
+          id: req_c04481666f4044c2ae5dfd5691fb1e1f
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 10
+        method: GET
+        scripts:
+          afterResponse: |-
+            insomnia.test("404 Not Found", () => {
+              insomnia.expect(insomnia.response.code).to.eql(404);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tournaments/{{ _.tournament_id }}/matches/{{ _.match_id
+          }}"
+        name: 5.08 PUT match - invalid date
+        meta:
+          id: req_c206ef2034fe492b9061c6276e74352f
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 8
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "homeTeamId": "{{ _.team_a_id }}",
+              "awayTeamId": "{{ _.team_b_id }}",
+              "date": "tomorrow"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        scripts:
+          afterResponse: |-
+            insomnia.test("400 Bad Request", () => {
+              insomnia.expect(insomnia.response.code).to.eql(400);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tournaments/{{ _.tournament_id }}/teams/{{ _.unknown_id
+          }}"
+        name: 5.11 GET team - unknown id
+        meta:
+          id: req_f824fbaa3ce14061ae0631e3c13c6829
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 11
+        method: GET
+        scripts:
+          afterResponse: |-
+            insomnia.test("404 Not Found", () => {
+              insomnia.expect(insomnia.response.code).to.eql(404);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: 4 Business rules
+    meta:
+      id: fld_2bbfb8229cd44d39b8d9925d5ec9458c
+      created: 1794482826995
+      modified: 1794484816489
+      sortKey: 4
+      description: ""
+    children:
+      - url: "{{ _.base_url }}/tournaments/{{ _.tournament_id }}/teams/{{ _.team_a_id
+          }}"
+        name: 4.3 DELETE team in a match
+        meta:
+          id: req_7d22144a1d5c4af3ab099b54907b515b
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 3
+        method: DELETE
+        scripts:
+          afterResponse: |-
+            insomnia.test("409 Conflict", () => {
+              insomnia.expect(insomnia.response.code).to.eql(409);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tournaments/{{ _.tournament_id }}/matches/{{ _.match_id
+          }}/result"
+        name: 4.2 PATCH result again
+        meta:
+          id: req_a213dfe55a2c43fbae148bb03c525045
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 2
+        method: PATCH
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "homeScore": 3,
+              "awayScore": 3
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        scripts:
+          afterResponse: |-
+            insomnia.test("409 Conflict", () => {
+              insomnia.expect(insomnia.response.code).to.eql(409);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tournaments/{{ _.tournament_id }}/matches/{{ _.match_id
+          }}"
+        name: 4.1 PUT completed match
+        meta:
+          id: req_c9f70124889c45178bbb8d9e8fe57489
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 1
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "homeTeamId": "{{ _.team_a_id }}",
+              "awayTeamId": "{{ _.team_b_id }}",
+              "date": "2027-06-14T16:00:00Z"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        scripts:
+          afterResponse: |-
+            insomnia.test("409 Conflict", () => {
+              insomnia.expect(insomnia.response.code).to.eql(409);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tournaments/{{ _.tournament_id }}"
+        name: 4.4 DELETE tournament with teams
+        meta:
+          id: req_f8804b905355444da345c74b1b7b94ea
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 4
+        method: DELETE
+        scripts:
+          afterResponse: |-
+            insomnia.test("409 Conflict", () => {
+              insomnia.expect(insomnia.response.code).to.eql(409);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: 7 Clean up
+    meta:
+      id: fld_96b30d582e3c4133a2c67a40f95b9b18
+      created: 1794482826995
+      modified: 1794484821198
+      sortKey: 7
+      description: ""
+    children:
+      - url: "{{ _.base_url }}/tournaments/{{ _.tournament_id }}/teams/{{ _.team_b_id
+          }}"
+        name: 7.3 DELETE team B
+        meta:
+          id: req_2f06290c82174755829d14fc4d26a36d
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 3
+        method: DELETE
+        scripts:
+          afterResponse: |-
+            insomnia.test("204 No Content", () => {
+              insomnia.expect(insomnia.response.code).to.eql(204);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tournaments/{{ _.tournament_id }}/matches/{{ _.match_id
+          }}"
+        name: 7.1 DELETE match
+        meta:
+          id: req_c19d1fb9298a43f583485a26ef991c16
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 1
+        method: DELETE
+        scripts:
+          afterResponse: |-
+            insomnia.test("204 No Content", () => {
+              insomnia.expect(insomnia.response.code).to.eql(204);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tournaments/{{ _.tournament_id }}"
+        name: 7.5 DELETE tournament
+        meta:
+          id: req_d461839d878d4d66902af6245ef62652
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 5
+        method: DELETE
+        scripts:
+          afterResponse: |-
+            insomnia.test("204 No Content", () => {
+              insomnia.expect(insomnia.response.code).to.eql(204);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tournaments/{{ _.tournament_id }}/teams/{{ _.team_c_id
+          }}"
+        name: 7.4 DELETE team C
+        meta:
+          id: req_e046b4fa11f247e2bdc365f64164ab4d
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 4
+        method: DELETE
+        scripts:
+          afterResponse: |-
+            insomnia.test("204 No Content", () => {
+              insomnia.expect(insomnia.response.code).to.eql(204);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tournaments/{{ _.tournament_id }}/teams/{{ _.team_a_id
+          }}"
+        name: 7.2 DELETE team A
+        meta:
+          id: req_fe32cf78401947b7beab7072f0dcfcfc
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 2
+        method: DELETE
+        scripts:
+          afterResponse: |-
+            insomnia.test("204 No Content", () => {
+              insomnia.expect(insomnia.response.code).to.eql(204);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: 6 Optional
+    meta:
+      id: fld_a790562d90094bdfb62defcdce6d55bc
+      created: 1794482826995
+      modified: 1794484819874
+      sortKey: 6
+      description: ""
+    children:
+      - url: "{{ _.base_url }}/tournaments/{{ _.tournament_id }}/standings"
+        name: 6.1 GET standings
+        meta:
+          id: req_99c6a662682c44c8ae5f87d1f3a62263
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 1
+        method: GET
+        scripts:
+          afterResponse: |-
+            insomnia.test("200 OK", () => {
+              insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: 2 Teams
+    meta:
+      id: fld_ac0de45f805943ff98150dcbc40152ee
+      created: 1794482826995
+      modified: 1794484813761
+      sortKey: 2
+      description: ""
+    children:
+      - url: "{{ _.base_url }}/tournaments/{{ _.tournament_id }}/teams"
+        name: 2.4 GET all teams
+        meta:
+          id: req_2dc6df30a81b4892a046eb40e1b19236
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 4
+        method: GET
+        scripts:
+          afterResponse: |-
+            insomnia.test("200 OK", () => {
+              insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+            insomnia.test("Body is an array", () => {
+              insomnia.expect(insomnia.response.json()).to.be.an("array");
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tournaments/{{ _.tournament_id }}/teams/{{ _.team_a_id
+          }}"
+        name: 2.6 PUT team A
+        meta:
+          id: req_4ce2bc8f32e242c3917cc2246b8d73e5
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 6
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "name": "Clapham Common FC Youth",
+              "city": "Clapham",
+              "coach": "James Whitfield"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        scripts:
+          afterResponse: |-
+            insomnia.test("200 OK", () => {
+              insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tournaments/{{ _.tournament_id }}/teams"
+        name: 2.3 POST team C
+        meta:
+          id: req_a4203b6a3dce4de099e243ad996b2633
+          created: 1794482826995
+          modified: 1794484802866
+          isPrivate: false
+          description: ""
+          sortKey: 3
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "name": "Wandsworth Wanderers",
+              "city": "London",
+              "coach": "Tony Stark"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        scripts:
+          afterResponse: >-
+            insomnia.test("201 Created", () => {
+              insomnia.expect(insomnia.response.code).to.eql(201);
+            });
+
+            if (insomnia.response.code === 201) {
+              insomnia.environment.set("team_c_id", insomnia.response.json().id);
+            }
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tournaments/{{ _.tournament_id }}/teams"
+        name: 2.2 POST team B
+        meta:
+          id: req_bbc1e295769545069313d5bef49b71a4
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 2
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "name": "Broomwood Boys",
+              "city": "London",
+              "coach": "Bruce Banner"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        scripts:
+          afterResponse: >-
+            insomnia.test("201 Created", () => {
+              insomnia.expect(insomnia.response.code).to.eql(201);
+            });
+
+            if (insomnia.response.code === 201) {
+              insomnia.environment.set("team_b_id", insomnia.response.json().id);
+            }
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tournaments/{{ _.tournament_id }}/teams"
+        name: 2.1 POST team A
+        meta:
+          id: req_c52ccb281f6a4cef8a75d3f938cc805f
+          created: 1794482826995
+          modified: 1794484784478
+          isPrivate: false
+          description: ""
+          sortKey: 1
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "name": "Clapham Common FC",
+              "city": "London",
+              "coach": "Steve Rogers"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        scripts:
+          afterResponse: >-
+            insomnia.test("201 Created", () => {
+              insomnia.expect(insomnia.response.code).to.eql(201);
+            });
+
+            if (insomnia.response.code === 201) {
+              insomnia.environment.set("team_a_id", insomnia.response.json().id);
+            }
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tournaments/{{ _.tournament_id }}/teams/{{ _.team_a_id
+          }}"
+        name: 2.5 GET team by id
+        meta:
+          id: req_da2e922d44a84cf992feb48b9bee4cdc
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 5
+        method: GET
+        scripts:
+          afterResponse: |-
+            insomnia.test("200 OK", () => {
+              insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: 3 Matches
+    meta:
+      id: fld_ec51aa543dda45b98edb3e95859bce05
+      created: 1794482826995
+      modified: 1794484815338
+      sortKey: 3
+      description: ""
+    children:
+      - url: "{{ _.base_url }}/tournaments/{{ _.tournament_id }}/matches"
+        name: 3.2 GET all matches
+        meta:
+          id: req_22cd6bff9f2d49cc8d0b50f221861faf
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 2
+        method: GET
+        scripts:
+          afterResponse: |-
+            insomnia.test("200 OK", () => {
+              insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+            insomnia.test("Body is an array", () => {
+              insomnia.expect(insomnia.response.json()).to.be.an("array");
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tournaments/{{ _.tournament_id }}/matches/{{ _.match_id
+          }}/result"
+        name: 3.5 PATCH match result
+        meta:
+          id: req_343f4f928d284ffd876d9f2f0ed9515f
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 5
+        method: PATCH
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "homeScore": 2,
+              "awayScore": 1
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        scripts:
+          afterResponse: >-
+            insomnia.test("200 OK", () => {
+              insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+
+            insomnia.test("Status is completed", () => {
+              insomnia.expect(insomnia.response.json().status).to.eql("completed");
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tournaments/{{ _.tournament_id }}/matches/{{ _.match_id
+          }}"
+        name: 3.4 PUT match (A vs C)
+        meta:
+          id: req_c147b7ce2afa4762a01962629e99c17a
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 4
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "homeTeamId": "{{ _.team_a_id }}",
+              "awayTeamId": "{{ _.team_c_id }}",
+              "date": "2027-06-13T16:00:00Z"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        scripts:
+          afterResponse: |-
+            insomnia.test("200 OK", () => {
+              insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tournaments/{{ _.tournament_id }}/matches"
+        name: 3.1 POST match (A vs B)
+        meta:
+          id: req_c7344f534a264a61af29b9a8029827c5
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 1
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "homeTeamId": "{{ _.team_a_id }}",
+              "awayTeamId": "{{ _.team_b_id }}",
+              "date": "2027-06-12T14:00:00Z"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        scripts:
+          afterResponse: |-
+            insomnia.test("201 Created", () => {
+              insomnia.expect(insomnia.response.code).to.eql(201);
+            });
+            insomnia.test("Scores are null", () => {
+              const match = insomnia.response.json();
+              insomnia.expect(match.homeScore).to.eql(null);
+              insomnia.expect(match.awayScore).to.eql(null);
+            });
+            if (insomnia.response.code === 201) {
+              insomnia.environment.set("match_id", insomnia.response.json().id);
+            }
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tournaments/{{ _.tournament_id }}/matches/{{ _.match_id
+          }}"
+        name: 3.3 GET match by id
+        meta:
+          id: req_ed6b1e12be3240bdb648a0b2102936fc
+          created: 1794482826995
+          modified: 1794482826995
+          isPrivate: false
+          description: ""
+          sortKey: 3
+        method: GET
+        scripts:
+          afterResponse: |-
+            insomnia.test("200 OK", () => {
+              insomnia.expect(insomnia.response.code).to.eql(200);
+            });
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_23d22cd90d43478a7a0451e1316811f293cc3316
+    created: 1794483047110
+    modified: 1794484821197
+environments:
+  name: Base Environment
+  meta:
+    id: env_23d22cd90d43478a7a0451e1316811f293cc3316
+    created: 1794483047079
+    modified: 1794484821197
+    isPrivate: false
+  data:
+    base_url: https://lgeodex5ua.execute-api.eu-north-1.amazonaws.com
+    unknown_id: b6f33989-2c47-45c1-a453-6440dd2ee114
+    tournament_id: 5926f4a1-b79c-4c8b-a1fb-82b3a0aafab2
+    team_a_id: 454a999b-f0a4-48c7-9ae8-e20c437ce744
+    team_b_id: 0424e70a-586f-4858-9572-df290d802add
+    team_c_id: cf474286-0b33-404d-a802-c3af4de3ade6
+    match_id: 42aba583-ea15-4f4a-a7cf-ea57a99ce864
