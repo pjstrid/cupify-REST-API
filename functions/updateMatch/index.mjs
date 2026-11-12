@@ -4,6 +4,8 @@
  */
 import middy from "@middy/core";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
+import { createError } from "@middy/util";
+import { sendResponse } from "../../services/responses.mjs";
 import {
   isJsonObject,
   missingFields,
@@ -13,14 +15,12 @@ import { getTournamentById } from "../../services/tournaments.mjs";
 import { getTeam } from "../../services/teams.mjs";
 import { getMatch, updateMatch } from "../../services/matches.mjs";
 import { errorHandler } from "../../middlewares/errorHandler.mjs";
-import { createError } from "@middy/util";
-import { sendResponse } from "../../services/responses.mjs";
 
 /**
- * Updates the teams and date of a scheduled match.
+ * Updates the teams and date of a scheduled match. Status and scores never change here.
  * @returns 200 with the updated match; 400 / 404 / 409 / 500 via errorHandler.
  */
-export const handler = middy(async (event) => {
+const updateMatchHandler = async (event) => {
   const { id: tournamentId, matchId } = event.pathParameters;
 
   if (!isJsonObject(event.body)) {
@@ -59,8 +59,10 @@ export const handler = middy(async (event) => {
     throw createError(404, "Match not found");
   }
 
-  const homeTeam = await getTeam(tournamentId, homeTeamId);
-  const awayTeam = await getTeam(tournamentId, awayTeamId);
+  const [homeTeam, awayTeam] = await Promise.all([
+    getTeam(tournamentId, homeTeamId),
+    getTeam(tournamentId, awayTeamId),
+  ]);
 
   if (!homeTeam || !awayTeam) {
     throw createError(404, "Both teams must belong to this tournament");
@@ -77,6 +79,8 @@ export const handler = middy(async (event) => {
   });
 
   return sendResponse(200, updatedMatch);
-})
+};
+
+export const handler = middy(updateMatchHandler)
   .use(httpJsonBodyParser())
   .use(errorHandler());

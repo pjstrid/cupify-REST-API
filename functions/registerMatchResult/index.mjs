@@ -5,7 +5,6 @@
 import middy from "@middy/core";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
 import { createError } from "@middy/util";
-
 import { sendResponse } from "../../services/responses.mjs";
 import { isJsonObject, isValidScore } from "../../services/validation.mjs";
 import { getTournamentById } from "../../services/tournaments.mjs";
@@ -13,11 +12,11 @@ import { getMatch, registerMatchResult } from "../../services/matches.mjs";
 import { errorHandler } from "../../middlewares/errorHandler.mjs";
 
 /**
- * Registers the result of a match.
+ * Registers the result of a match. A registered result can never be changed.
  * @returns 200 with the updated match; 400 / 404 / 409 / 500 via errorHandler.
  */
-export const handler = middy(async (event) => {
-  const { id, matchId } = event.pathParameters;
+const registerMatchResultHandler = async (event) => {
+  const { id: tournamentId, matchId } = event.pathParameters;
   if (!isJsonObject(event.body)) {
     throw createError(400, "Request body must be a valid JSON object");
   }
@@ -30,12 +29,12 @@ export const handler = middy(async (event) => {
     );
   }
 
-  const tournament = await getTournamentById(id);
+  const tournament = await getTournamentById(tournamentId);
   if (!tournament) {
     throw createError(404, "Tournament not found");
   }
 
-  const match = await getMatch(id, matchId);
+  const match = await getMatch(tournamentId, matchId);
   if (!match) {
     throw createError(404, "Match not found");
   }
@@ -44,12 +43,14 @@ export const handler = middy(async (event) => {
   }
 
   const updatedMatch = await registerMatchResult(
-    id,
+    tournamentId,
     matchId,
     homeScore,
     awayScore,
   );
   return sendResponse(200, updatedMatch);
-})
+};
+
+export const handler = middy(registerMatchResultHandler)
   .use(httpJsonBodyParser())
   .use(errorHandler());

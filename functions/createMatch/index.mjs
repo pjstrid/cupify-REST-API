@@ -2,6 +2,7 @@
  * POST /tournaments/{id}/matches
  * Schedules a new match between two teams in a tournament.
  */
+import { randomUUID } from "node:crypto";
 import middy from "@middy/core";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
 import { createError } from "@middy/util";
@@ -17,11 +18,11 @@ import { createMatch } from "../../services/matches.mjs";
 import { errorHandler } from "../../middlewares/errorHandler.mjs";
 
 /**
- * Creates a scheduled match in a tournament.
+ * Creates a scheduled match in a tournament. Both scores start as null.
  * @returns 201 with the created match; 400 / 404 / 500 via errorHandler.
  */
-export const handler = middy(async (event) => {
-  const tournamentId = event.pathParameters.id;
+const createMatchHandler = async (event) => {
+  const { id: tournamentId } = event.pathParameters;
 
   if (!isJsonObject(event.body)) {
     throw createError(400, "Request body must be a valid JSON object");
@@ -52,15 +53,17 @@ export const handler = middy(async (event) => {
     throw createError(404, "Tournament not found");
   }
 
-  const homeTeam = await getTeam(tournamentId, homeTeamId);
-  const awayTeam = await getTeam(tournamentId, awayTeamId);
+  const [homeTeam, awayTeam] = await Promise.all([
+    getTeam(tournamentId, homeTeamId),
+    getTeam(tournamentId, awayTeamId),
+  ]);
 
   if (!homeTeam || !awayTeam) {
     throw createError(404, "Both teams must belong to this tournament");
   }
 
   const match = {
-    id: crypto.randomUUID(),
+    id: randomUUID(),
     tournamentId,
     homeTeamId,
     awayTeamId,
@@ -72,6 +75,8 @@ export const handler = middy(async (event) => {
 
   await createMatch(match);
   return sendResponse(201, match);
-})
+};
+
+export const handler = middy(createMatchHandler)
   .use(httpJsonBodyParser())
   .use(errorHandler());
