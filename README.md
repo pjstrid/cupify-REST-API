@@ -158,6 +158,19 @@ The shared Insomnia collection is in `insomnia/cupify-collection.yaml`. It tests
 
 Every request checks its own status code. The POST requests save the new ids (`tournament_id`, `team_a_id`, `team_b_id`, `team_c_id`, `match_id`), so you never copy ids by hand. The last folder, **7 Clean up**, deletes everything the run created.
 
+### Smoke test
+
+After you deploy, and before you open a pull request, run the smoke test against your own API:
+
+```bash
+npm run smoke -- <your API URL>
+```
+
+It checks every endpoint and every error case, prints one row per check and ends with `X/Y passed`. It creates its own test data ("Smoke Cup") and deletes all of it at the end. Never run it against the public API while someone is using it.
+
+### Automatic check on pull requests
+
+Every pull request into `dev` or `main` runs a check on GitHub: `npm run format:check` and `node --check` on every `.mjs` file. A red ❌ means a file is not formatted or has a syntax error. Run `npm run format` and push again.
 
 ## Glossary
 

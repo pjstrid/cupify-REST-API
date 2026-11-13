@@ -5,7 +5,8 @@
   "description": "REST API for managing sports tournaments, teams, matches and results.",
   "scripts": {
     "format": "prettier --write \"**/*.mjs\"",
-    "format:check": "prettier --check \"**/*.mjs\""
+    "format:check": "prettier --check \"**/*.mjs\"",
+    "smoke": "node scripts/smoke-test.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.1163.0",
