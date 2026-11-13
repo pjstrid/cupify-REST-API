@@ -16,7 +16,7 @@ if (!baseUrl) {
   process.exit(1);
 }
 
-const results = [];
+const results   =  [];
 const created = { tournaments: [], teams: [], matches: [] };
 
 /**
