@@ -23,7 +23,7 @@ jobs:
       - name: Install packages
         run: npm ci
 
-      - name: check formatting
+      - name: Check formatting
         run: npm run format:check
 
       - name: Check syntax
